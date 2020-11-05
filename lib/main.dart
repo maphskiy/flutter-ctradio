@@ -6,13 +6,7 @@ import 'package:shimmer/shimmer.dart';
 
 typedef void OnError(Exception exception);
 
-const kUrl = "https://radio.criminaltribe.com:8443/radio_stream";
-const secondsToBuffer = 10;
-const trackInfoUpdateTimeout = 15;
-const debug = true;
-
 void main() {
-  // AudioPlayer.logEnabled = true;
   runApp(new MaterialApp(
       title: "Criminal Tribe Radio", home: new Scaffold(body: new RadioApp())));
 }
@@ -23,9 +17,8 @@ class RadioApp extends StatefulWidget {
 }
 
 class _RadioAppState extends State<RadioApp> {
-  PlayerState playerState = PlayerState.playing;
-  // Player player = new Player();
-  FlutterRadioPlayer player = new FlutterRadioPlayer();
+  PlayerState playerState = PlayerState.paused;
+  Player player = new Player();
   String track = "";
 
   get isPlaying => playerState == PlayerState.playing;
@@ -34,11 +27,11 @@ class _RadioAppState extends State<RadioApp> {
   @override
   void initState() {
     super.initState();
-    player.isPlayingStream.listen((event) {
+    player.playerStateStream.listen((event) {
       print(event);
       switch (event) {
         case FlutterRadioPlayer.flutter_radio_stopped:
-          setState(() => {playerState = PlayerState.paused});
+          setState(() => {playerState = PlayerState.stoped});
           break;
         case FlutterRadioPlayer.flutter_radio_loading:
           setState(() => {playerState = PlayerState.loading});
@@ -51,12 +44,13 @@ class _RadioAppState extends State<RadioApp> {
           break;
       }
     });
-    player.metaDataStream.listen((event) {
+    player.trackStream.listen((event) {
+      print(event);
       setState(() {
         track = event;
       });
     });
-    player.init("Criminal Tribe App", "Radio", kUrl, "false");
+    player.playerInit();
   }
 
   @override
@@ -159,7 +153,8 @@ class _RadioAppState extends State<RadioApp> {
                         : (isPlaying
                             ? Image.asset('assets/stop_btn.png')
                             : Image.asset('assets/play_btn.png')),
-                    onPressed: () => isLoading ? null : player.playOrPause(),
+                    onPressed: () =>
+                        isLoading ? null : player.playOrPause(playerState),
                   ),
                 ),
               )));
