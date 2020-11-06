@@ -8,7 +8,7 @@
 	-->
 	<uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 	<uses-permission android:name="android.permission.INTERNET" />
-	<application android:name="io.flutter.app.FlutterApplication" android:label="Criminal Tribe Radio" android:icon="@mipmap/ic_launcher" android:usesCleartextTraffic="true">
+	<application android:name="io.flutter.app.FlutterApplication" android:label="Criminal Tribe Radio" android:icon="@mipmap/launcher_icon" android:usesCleartextTraffic="true">
 		<service android:name=".core.StreamingCore" />
 		<activity android:name=".MainActivity" android:launchMode="singleTop" android:theme="@style/LaunchTheme" android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode" android:hardwareAccelerated="true" android:windowSoftInputMode="adjustResize">
 			<!--
