@@ -20,10 +20,13 @@ class RadioApp extends StatefulWidget {
   _RadioAppState createState() => new _RadioAppState();
 }
 
-class _RadioAppState extends State<RadioApp> {
+class _RadioAppState extends State<RadioApp>
+    with SingleTickerProviderStateMixin {
   PlayerState playerState = PlayerState.paused;
   Player player = new Player();
   String track = "";
+  Animation _heartAnimation;
+  AnimationController _heartAnimationController;
 
   get isPlaying => playerState == PlayerState.playing;
   get isLoading => playerState == PlayerState.loading;
@@ -36,15 +39,19 @@ class _RadioAppState extends State<RadioApp> {
       switch (event) {
         case FlutterRadioPlayer.flutter_radio_stopped:
           setState(() => {playerState = PlayerState.stoped});
+          _heartAnimationController.reset();
           break;
         case FlutterRadioPlayer.flutter_radio_loading:
           setState(() => {playerState = PlayerState.loading});
+          _heartAnimationController.reset();
           break;
         case FlutterRadioPlayer.flutter_radio_playing:
           setState(() => {playerState = PlayerState.playing});
+          _heartAnimationController.forward();
           break;
         case FlutterRadioPlayer.flutter_radio_paused:
           setState(() => {playerState = PlayerState.paused});
+          _heartAnimationController.reset();
           break;
       }
     });
@@ -55,13 +62,25 @@ class _RadioAppState extends State<RadioApp> {
       });
     });
     player.playerInit();
+
+    var baseSpeed = 580;
+    _heartAnimationController = AnimationController(
+        vsync: this, duration: Duration(milliseconds: baseSpeed));
+    _heartAnimation = Tween(begin: 0, end: 0.01).animate(CurvedAnimation(
+        curve: Curves.bounceOut, parent: _heartAnimationController));
+
+    _heartAnimationController.addStatusListener((AnimationStatus status) {
+      if (status == AnimationStatus.completed) {
+        _heartAnimationController.repeat();
+      }
+    });
   }
 
   @override
   void dispose() {
-    print('dispose');
-    player.stop();
     super.dispose();
+    player.stop();
+    _heartAnimationController?.dispose();
   }
 
   Future<bool> _onWillPop() {
@@ -138,35 +157,44 @@ class _RadioAppState extends State<RadioApp> {
         onWillPop: _onWillPop);
   }
 
-  Widget _buildPlayer() => new Container(
-      decoration: BoxDecoration(
-          image: DecorationImage(
-              fit: BoxFit.fitHeight, image: AssetImage('assets/btn_bg.png'))),
-      child: new LayoutBuilder(
-          builder: (context, contstraints) => Center(
-                child: new ConstrainedBox(
-                  constraints: new BoxConstraints.tight(
-                      Size.fromRadius(contstraints.maxHeight * 0.225)),
-                  child: FloatingActionButton(
-                    backgroundColor: Colors.transparent,
-                    child: isLoading
-                        ? SizedBox(
-                            child: CircularProgressIndicator(
-                              strokeWidth: 4,
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                  Color.fromRGBO(255, 255, 255, 0.8)),
-                            ),
-                            height: contstraints.maxHeight,
-                            width: contstraints.maxHeight,
-                          )
-                        : (isPlaying
-                            ? Image.asset('assets/stop_btn.png')
-                            : Image.asset('assets/play_btn.png')),
-                    onPressed: () =>
-                        isLoading ? null : player.playOrPause(playerState),
-                  ),
-                ),
-              )));
+  Widget _buildPlayer() => AnimatedBuilder(
+        animation: _heartAnimationController,
+        builder: (context, child) {
+          return Container(
+              margin: EdgeInsets.all(
+                  MediaQuery.of(context).size.height * _heartAnimation.value),
+              decoration: BoxDecoration(
+                  image: DecorationImage(
+                      fit: BoxFit.fitHeight,
+                      image: AssetImage('assets/btn_bg.png'))),
+              child: new LayoutBuilder(
+                  builder: (context, contstraints) => Center(
+                        child: new ConstrainedBox(
+                          constraints: new BoxConstraints.tight(
+                              Size.fromRadius(contstraints.maxHeight * 0.225)),
+                          child: FloatingActionButton(
+                            backgroundColor: Colors.transparent,
+                            child: isLoading
+                                ? SizedBox(
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 4,
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                          Color.fromRGBO(255, 255, 255, 0.8)),
+                                    ),
+                                    height: contstraints.maxHeight,
+                                    width: contstraints.maxHeight,
+                                  )
+                                : (isPlaying
+                                    ? Image.asset('assets/stop_btn.png')
+                                    : Image.asset('assets/play_btn.png')),
+                            onPressed: () => isLoading
+                                ? null
+                                : player.playOrPause(playerState),
+                          ),
+                        ),
+                      )));
+        },
+      );
   Widget _buildHeader(Orientation orientation) => new Container(
         decoration: BoxDecoration(
             image: DecorationImage(
