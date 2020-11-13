@@ -3,8 +3,12 @@ import 'package:ctradio/player/player.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_radio_player/flutter_radio_player.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:flutter/services.dart';
 
 typedef void OnError(Exception exception);
+
+const trackTextScale = 1.8;
+const trackTextColor = Color.fromRGBO(255, 255, 255, 0.7);
 
 void main() {
   runApp(new MaterialApp(
@@ -174,23 +178,31 @@ class _RadioAppState extends State<RadioApp> {
       child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            isPlaying
-                ? Shimmer.fromColors(
-                    baseColor: Color.fromRGBO(255, 255, 255, 0.7),
-                    highlightColor: Colors.white,
-                    child: Text(
+            GestureDetector(
+              onTap: () {
+                Clipboard.setData(new ClipboardData(text: track)).then((_) {
+                  Scaffold.of(context).showSnackBar(SnackBar(
+                      content: Text("Track name copied to clipboard")));
+                });
+              },
+              child: isPlaying
+                  ? Shimmer.fromColors(
+                      baseColor: trackTextColor,
+                      highlightColor: Colors.white,
+                      child: Text(
+                        track,
+                        textAlign: TextAlign.center,
+                        textScaleFactor: trackTextScale,
+                      ),
+                    )
+                  : Text(
                       track,
                       textAlign: TextAlign.center,
-                      textScaleFactor: 1.8,
+                      style: TextStyle(
+                        color: trackTextColor,
+                      ),
+                      textScaleFactor: trackTextScale,
                     ),
-                  )
-                : Text(
-                    track,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Color.fromRGBO(255, 255, 255, 0.7),
-                    ),
-                    textScaleFactor: 1.8,
-                  ),
+            )
           ]));
 }
