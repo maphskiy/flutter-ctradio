@@ -89,10 +89,12 @@ class _RadioAppState extends State<RadioApp> {
 
   @override
   Widget build(BuildContext context) {
+    double statusBarHeight = MediaQuery.of(context).padding.top;
     return new WillPopScope(
         child:
             new OrientationBuilder(builder: (orientationContext, orientation) {
           return new Container(
+              padding: EdgeInsets.only(top: statusBarHeight),
               decoration: BoxDecoration(
                   image: DecorationImage(
                       fit: orientation == Orientation.portrait
@@ -125,7 +127,10 @@ class _RadioAppState extends State<RadioApp> {
                             height: (constraints.maxHeight -
                                     constraints.minHeight) *
                                 0.3,
-                            child: _buildTrackInfo(),
+                            child: new Container(
+                                alignment: Alignment.center,
+                                padding: EdgeInsets.all(20),
+                                child: _buildTrackInfo()),
                           ),
                         ],
                       )));
@@ -172,10 +177,7 @@ class _RadioAppState extends State<RadioApp> {
                 image: AssetImage('assets/header.png'))),
       );
 
-  Widget _buildTrackInfo() => new Container(
-      alignment: Alignment.center,
-      padding: EdgeInsets.all(20),
-      child: Column(
+  Widget _buildTrackInfo() => new Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             GestureDetector(
@@ -204,5 +206,5 @@ class _RadioAppState extends State<RadioApp> {
                       textScaleFactor: trackTextScale,
                     ),
             )
-          ]));
+          ]);
 }
