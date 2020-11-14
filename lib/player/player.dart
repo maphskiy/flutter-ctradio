@@ -1,6 +1,6 @@
 import 'package:flutter_radio_player/flutter_radio_player.dart';
 
-const kUrl = "https://radio.criminaltribe.com:8443/radio_stream";
+const kUrl = "https://radio.criminaltribe.com:8443/mobile_stream";
 
 enum PlayerState { playing, loading, paused, stoped }
 
