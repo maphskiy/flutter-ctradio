@@ -23,7 +23,7 @@ class Player {
   }
 
   Future<void> playerInit() {
-    return _player.init("Criminal Tribe App", "Radio", kUrl, "false");
+    return _player.init("", "", kUrl, "false");
   }
 
   Future<bool> stop() {
@@ -34,6 +34,8 @@ class Player {
     RegExp exp = new RegExp(r'(?<=title=")(.*)(?=", url)',
         multiLine: false, caseSensitive: false);
     RegExpMatch match = exp.firstMatch(metadata);
-    return match?.group(0) ?? "";
+    String track = match?.group(0) ?? "";
+    _player.setTitle(track, "");
+    return track;
   }
 }

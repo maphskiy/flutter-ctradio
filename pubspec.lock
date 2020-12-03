@@ -93,10 +93,12 @@ packages:
   flutter_radio_player:
     dependency: "direct main"
     description:
-      name: flutter_radio_player
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.7"
+      path: "."
+      ref: HEAD
+      resolved-ref: fbaf92214bddab47245c8618de4d3e56b0be9921
+      url: "git://github.com/maphskiy/FlutterOnlinePlayer.git"
+    source: git
+    version: "1.0.8"
   flutter_test:
     dependency: "direct dev"
     description: flutter

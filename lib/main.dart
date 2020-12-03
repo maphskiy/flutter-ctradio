@@ -56,14 +56,13 @@ class _RadioAppState extends State<RadioApp>
       }
     });
     player.trackStream.listen((event) {
-      print(event);
       setState(() {
         track = event;
       });
     });
     player.playerInit();
 
-    var baseSpeed = 580;
+    var baseSpeed = 570;
     _heartAnimationController = AnimationController(
         vsync: this, duration: Duration(milliseconds: baseSpeed));
     _heartAnimation = Tween(begin: 0, end: 0.01).animate(CurvedAnimation(
