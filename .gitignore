@@ -42,3 +42,7 @@ app.*.map.json
 
 # Android keystore related
 android/*.keystore
+ios/Podfile*
+ios/build/XCBuildData/
+ios/Flutter/Debug.xcconfig
+ios/Flutter/Release.xcconfig
